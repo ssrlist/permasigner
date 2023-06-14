@@ -1,9 +1,16 @@
-## Before submitting your PR, please review the following checklist:
-- [ ] **DO** keep pull requests small so they can be easily reviewed.
-- [ ] **DO** make sure not to introduce any compiler warnings.
-- [ ] **AVOID** breaking the continuous integration build.
-- [ ] **AVOID** making significant changes the script.
+**Is your pull request related to a problem? Please describe.**
+A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-## Description
+**Description**
+A clear and concise description of what you want to happen.
 
-## Is this related to an issue/problem?
+**Describe alternatives you've considered**
+A clear and concise description of any alternative solutions or features you've considered.
+
+**Additional context**
+Add any other context about the pull request here.
+
+**Checklist**
+
+-   [ ] The new code was tested.
+-   [ ] The code isn't overly messy.

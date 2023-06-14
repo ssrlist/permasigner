@@ -1,0 +1,69 @@
+name: Test script
+
+on:
+  push:
+    paths:
+      - '.github/workflows/test.yml'
+      - 'permasigner/**'
+      - 'main.py'
+      - 'poetry.lock'
+    branches: [main]
+    
+  pull_request:
+    paths:
+      - '.github/workflows/test.yml'
+      - 'permasigner/**'
+      - 'main.py'
+      - 'poetry.lock'
+    branches: [main]
+
+  workflow_dispatch:
+      
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ "ubuntu-latest", "macos-latest", "windows-latest" ]
+        python-version: [ "3.7", "3.8", "3.9", "3.10" ]
+
+    defaults:
+      run:
+        shell: bash
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        id: setup-python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+          
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --without dev --no-root
+
+      - name: Run script
+        run: poetry run permasigner -u https://github.com/Odyssey-Team/Taurine/releases/download/1.1.6/Taurine-1.1.6.ipa -d
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Taurine-1.1.6-${{ matrix.os }}-p${{ matrix.python-version }}.deb
+          path: output/**
